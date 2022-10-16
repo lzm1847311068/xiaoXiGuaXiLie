@@ -596,11 +596,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getTask(){
         HttpClient.getInstance().post(GET_TASK, LOGIN_URL)
-                .isSpliceUrl(true)
+                .isSpliceUrl(true)  //是否强制将params的参数拼接到url后面
                 .upJson("{}")
                 .params("ut","apprentice")
                 .headers("Cookie",cookie)
                 .execute(new StringCallback() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
@@ -626,7 +627,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     sendLog(obj.getString("msg"));
                                     return;
                                 }
-                                sendLog(obj.getString("msg"));
+                                if("刷单过于频繁，超过次数限制！".equals(obj.getString("msg"))){
+                                    List<BuyerNum> buyerNum = buyerNumList.stream().
+                                            filter(p -> p.getId().equals(tbId)).collect(Collectors.toList());
+                                    sendLog(buyerNum.get(0).getName()+" 日/周/月已接满，请明天在试");
+                                }else {
+                                    sendLog(obj.getString("msg"));
+                                }
                                 jieDan();
                             }
                         }catch (Exception e){
@@ -691,12 +698,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if("true".equals(o.getString("success"))){
                                 JSONObject j = o.getJSONObject("data").getJSONObject("task").getJSONObject("order").getJSONObject("commodity");
                                 JSONObject k = o.getJSONObject("data").getJSONObject("task").getJSONObject("order");
-                                sendLog("-------------------------------");
-                                sendLog("商品关键词："+j.getString("keyword"));
-                                sendLog("-------------------------------");
-                                sendLog("商品淘口令："+j.getString("validate_url"));
-                                sendLog("-------------------------------");
-                                sendLog("店铺名："+k.getString("seller_id"));
+                                sendLog2("-------------------------------");
+                                sendLog2("商品关键词："+j.getString("keyword"));
+                                sendLog2("-------------------------------");
+                                sendLog2("商品淘口令："+j.getString("validate_url"));
+                                sendLog2("-------------------------------");
+                                sendLog2("店铺名："+k.getString("seller_id"));
                             }else {
                                 sendLog(o.getString("msg"));
                             }
@@ -869,11 +876,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void sendLog(String log){
         scrollToTvLog();
+        if(tvLog.getLineCount() > 40){
+            tvLog.setText("");
+        }
         tvLog.append(new SimpleDateFormat("HH:mm:ss").format(new Date()) + ": "+log+"\n");
-        //如果日志大于100条，则清空
-//        if(tvLog.getLineCount() > 100){
-//            tvLog.setText("");
-//        }
+    }
+
+    public void sendLog2(String log){
+        scrollToTvLog();
+        tvLog.append(new SimpleDateFormat("HH:mm:ss").format(new Date()) + ": "+log+"\n");
     }
 
 
