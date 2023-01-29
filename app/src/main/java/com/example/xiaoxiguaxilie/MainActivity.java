@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //小西瓜
-    private long version = 826;
+    private long version = 827;
     private String todayCount;
     private String theWeekCount;
     private String theMonthCount;
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.tv_start:
 
-                version = 826;
+                version = 827;
                 version += getDayCount();
 
                 cookie = "";
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stop();
                 break;
             case R.id.tv_brow:
-                version = 826;
+                version = 827;
                 version += getDayCount();
                 browOpen();
                 break;
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(LOGIN_URL == ""){
                     tvLog.setText("获取最新网址中,请3秒后重试...");
                 }else {
-                    version = 826;
+                    version = 827;
                     version += getDayCount();
 
                     cookie = "";
