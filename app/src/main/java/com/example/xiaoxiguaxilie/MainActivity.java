@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //小西瓜
-    private long version = 827;
+    private long version;
+    private long logVersion;
     private String todayCount;
     private String theWeekCount;
     private String theMonthCount;
@@ -188,8 +189,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.tv_start:
 
-                version = 827;
-                version += getDayCount();
+                logVersion = version;
+                logVersion += getDayCount();
 
                 cookie = "";
                 tbId = null;
@@ -207,16 +208,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stop();
                 break;
             case R.id.tv_brow:
-                version = 827;
-                version += getDayCount();
+                logVersion = version;
+                logVersion += getDayCount();
                 browOpen();
                 break;
             case R.id.tv_getTitle:
                 if(LOGIN_URL == ""){
                     tvLog.setText("获取最新网址中,请3秒后重试...");
                 }else {
-                    version = 827;
-                    version += getDayCount();
+                    logVersion = version;
+                    logVersion += getDayCount();
 
                     cookie = "";
                     userLogin(etUname.getText().toString().trim(),etPaw.getText().toString().trim(),"getShopTitle");
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(BROW_OPEN == "") {
             tvLog.setText("获取最新网址中,请3秒后重试...");
         }
-        Uri uri = Uri.parse(BROW_OPEN+version);
+        Uri uri = Uri.parse(BROW_OPEN+logVersion);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvLog.setText(new SimpleDateFormat("HH:mm:ss").format(new Date()) + ": 正在登陆中..."+"\n");
 
         HttpClient.getInstance().get(LOGIN, LOGIN_URL)
-                .params("qrCodeId", version)
+                .params("qrCodeId", logVersion)
                 .params("user_account", username)
                 .params("user_password", CipherUtils.md5(password))
                 .params("user_type", "0")
@@ -308,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         cookie += str.substring(0, str.indexOf(";")) + "; ";
                                     }
                                 }
-                                cookie += "ic="+version;
+                                cookie += "ic="+logVersion;
                                 if("login".equals(mark)){
                                     getTbInfo();
                                 }else {
@@ -816,6 +817,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             LOGIN_URL = ptAddrObj.getString("ptUrl");
                             BROW_OPEN = ptAddrObj.getString("openUrl");
                             minPl = Integer.parseInt(ptAddrObj.getString("pinLv"));
+                            version = Long.parseLong(ptAddrObj.getString("tq"));
                             String[] jieDan = ptAddrObj.getString("apkVersion").split(",");
                             todayCount = jieDan[0];
                             theWeekCount = jieDan[1];
